@@ -6,13 +6,13 @@
 int main(void)
 {
     int filedeco;
-    struct stat statbuf;
-    if (stat(".", &statbuf) < 0)
+    struct stat* statbuf;
+    if (stat(".", statbuf) < 0)
     {
         err_sys("stat error");
     }
     else{
-        printf("%ld\n", (long)statbuf.st_ino);
+        printf("%ld\n", (long)statbuf->st_ino);
     }
     if (chdir("/test") < 0)
     {

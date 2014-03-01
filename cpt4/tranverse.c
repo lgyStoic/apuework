@@ -1,4 +1,4 @@
-#include <apue.h>
+#include "apue.h"
 #include <dirent.h>
 #include <limits.h>
 
@@ -8,8 +8,6 @@ static Myfunc myfunc;
 static int myftw(char*, Myfunc*);
 static int dopath(Myfunc*);
 static long nreg, ndir, nblk, nchr, nfifo, nslink, nsock, ntot;
-
-char* pall_alloc(int*);
 
 int main(int argc, char* argv[])
 {
@@ -56,13 +54,13 @@ myftw(char* pathname, Myfunc* func)
 static int
 dopath(Myfunc* func)
 {
-    struct stat statbuf;
+    struct stat *statbuf;
     struct dirent *dirp;
     DIR *dp;
     int ret;
     char *ptr;
 
-    if(lstat(fullpath, &statbuf) < 0)
+    if(lstat(fullpath, statbuf) < 0)
         return (func(fullpath, &statbuf, FTW_NS));
     if (S_ISDIR(statbuf.st_mode) == 0)
     {
@@ -133,16 +131,4 @@ myfunc (const char *pathname, const struct stat *buf, int mode)
             err_dump("unknow mode for %d for pathname %s", mode, pathname);
     }
     return (0);
-}
-
-char* path_alloc(int* size)
-{
-    char *p = NULL;
-    if(!size) return NULL;
-    p = malloc(256);
-    if(p)
-    *size = 256;
-    else
-    *size = 0;
-    return p;
 }
