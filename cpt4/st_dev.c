@@ -16,12 +16,13 @@ int main(int argc, char* argv[])
         }
         else
         {
-            printf("dev = %d/%d\n", major(statbuf.st_dev), minor(statbuf.st_dev));
+            printf("dev = %d/%d", major(statbuf.st_dev), minor(statbuf.st_dev));
             if (S_ISCHR(statbuf.st_mode) || S_ISBLK(statbuf.st_mode))
             {
-                printf("dev = %d/%d\n", major(statbuf.st_rdev),minor(statbuf.st_rdev));
+                printf("dev = %d/%d", major(statbuf.st_rdev),minor(statbuf.st_rdev));
             }       
-        } 
+        }
+        printf("\n"); 
     }
     exit(0);
 }
