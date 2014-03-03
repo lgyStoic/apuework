@@ -1,10 +1,11 @@
 #include "apue.h"
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdio.h>
 #define BUFSIZE 4096
 #define RWRWRW S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH
 int createAholeFIle();
-int creatNoHoleFile();
+int createNoHoleFile();
 
 char *fileWithHole = "file.hole";
 char *fileWithNoHole = "file.nohole"; 
@@ -13,18 +14,22 @@ int main(void)
     int creatFileNo,writeFileNo;
     char buf[BUFSIZE];
     int n;
-    creatFileNo = createAholeFIle();
-    writeFileNo = creatNoHoleFile();
-    close(creatFileNo);
-    if ((creatFileNo = open(fileWithHole, O_RDONLY)) < 0)
-    {
-        err_ret("open error");
-    }
+    creatFileNo = createAholeFIle(); //create a file and write something
+    writeFileNo = createNoHoleFile(); //create a file  
+    // close(creatFileNo);
+    // if ((creatFileNo = open(fileWithHole, O_RDONLY)) < 0)
+    // {
+    //     err_ret("open error");
+    // }
+    fdatasync(creatFileNo);
+    if(lseek(creatFileNo, 0, SEEK_SET) < 0)
+        err_ret("lseek error");
     while ((n = read(creatFileNo, buf, BUFSIZE)) > 0)
     {
         printf("-------\n");
         write(writeFileNo, buf, n);
     }
+    printf("%d\n", n);
     close(writeFileNo);
     close(creatFileNo);
     exit (0);
@@ -54,7 +59,7 @@ int createAholeFIle(void)
     return fileno;
 }
 
-int creatNoHoleFile(void)
+int createNoHoleFile(void)
 {
     int fileno;
     if((fileno = creat(fileWithNoHole, RWRWRW)) < 0)
